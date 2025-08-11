@@ -1,0 +1,14 @@
+// Colors
+$magenta: #AB26A0;
+$black: #000000;
+$grey: #636363;
+$red: #F14C4C;
+$white: #F9F9F9;
+
+// Body
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(#F5F3FF , #EDE9FE);
+  background-attachment: fixed; // stays still when scrolling
+}
