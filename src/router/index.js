@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const LandingView = () => import('@/views/LandingView.vue')
 const LoginView   = () => import('@/views/LoginView.vue')
 const SignupView  = () => import('@/views/SignupView.vue')
-// const AppView     = () => import('@/views/AppView.vue')
+const AppView     = () => import('@/views/AppView.vue')
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,7 +12,7 @@ const router = createRouter({
     { path: '/',        name: 'landing', component: LandingView },
     { path: '/login',   name: 'login',   component: LoginView,  meta: { guest: true } },
     { path: '/signup',  name: 'signup',  component: SignupView, meta: { guest: true } },
-    // { path: '/app',     name: 'app',     component: AppView,    meta: { requiresAuth: true } },
+    { path: '/app',     name: 'app',     component: AppView },
     // { path: '/:pathMatch(.*)*', redirect: '/' } // simple 404 redirect
   ],
   scrollBehavior() { return { top: 0 } }
