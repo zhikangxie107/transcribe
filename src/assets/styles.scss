@@ -12,3 +12,15 @@ body {
   background: linear-gradient(#F5F3FF , #EDE9FE);
   background-attachment: fixed; // stays still when scrolling
 }
+
+/* Common blob styles */
+.blob {
+	position: absolute;
+	width: 520px;
+	height: 520px;
+	border-radius: 50%;
+	opacity: 30%;
+	filter: blur(1px);
+	pointer-events: none;
+	z-index: 0;
+}

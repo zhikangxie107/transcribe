@@ -13,8 +13,8 @@
 				<p class="name">Transcribe</p>
 			</div>
 			<div class="action">
-				<button class="primary">Log in</button>
-				<button class="outline">Sign up</button>
+				<button class="primary" @click="goToLogin">Log in</button>
+				<button class="outline" @click="goToSignup">Sign up</button>
 			</div>
 		</div>
 	</section>
@@ -23,6 +23,18 @@
 <script setup>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faMicrophoneLines } from '@fortawesome/free-solid-svg-icons';
+
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const goToLogin = () => {
+	router.push('/login');
+};
+
+const goToSignup = () => {
+	router.push('/signup');
+};
 </script>
 
 <style lang="scss" scoped>
@@ -59,7 +71,7 @@ import { faMicrophoneLines } from '@fortawesome/free-solid-svg-icons';
 	.action {
 		display: flex;
 		gap: 10rem;
-        padding-left: 0.5rem;
+		padding-left: 0.5rem;
 
 		button {
 			font-size: 2rem;
@@ -89,18 +101,6 @@ import { faMicrophoneLines } from '@fortawesome/free-solid-svg-icons';
 			}
 		}
 	}
-}
-
-/* Common blob styles */
-.blob {
-	position: absolute;
-	width: 520px;
-	height: 520px;
-	border-radius: 50%;
-	opacity: 30%;
-	filter: blur(1px);
-	pointer-events: none;
-	z-index: 0;
 }
 
 /* Corner positions */
