@@ -21,27 +21,57 @@
 			</button>
 		</nav>
 
-		<!-- bottom gear -->
-		<button
-			class="icon-btn settings"
-			aria-label="Settings"
-		>
-			<FontAwesomeIcon :icon="faGear" />
-		</button>
+		<div class="settings-container">
+			<!-- bottom gear -->
+			<button
+				class="icon-btn settings"
+				aria-label="Settings"
+				@click="showMenu = !showMenu"
+			>
+				<FontAwesomeIcon :icon="faGear" />
+			</button>
+
+			<!-- popup menu -->
+			<div class="settings-popup" v-show="showMenu">
+				<div class="menu-item">
+					<FontAwesomeIcon :icon="faUser" />
+					<span>{{ username }}</span>
+				</div>
+				<div class="menu-item logout" @click="logout">
+					<FontAwesomeIcon :icon="faRightFromBracket" />
+					<span>Log out</span>
+				</div>
+			</div>
+		</div>
 	</aside>
 </template>
 
 <script setup>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faPlus, faMagnifyingGlass, faGear } from '@fortawesome/free-solid-svg-icons';
-
+import {
+	faPlus,
+	faMagnifyingGlass,
+	faGear,
+	faRightFromBracket,
+} from '@fortawesome/free-solid-svg-icons';
+import { faUser } from '@fortawesome/free-regular-svg-icons';
+import { ref } from 'vue';
 // Props
 defineProps({
 	active: { type: String, default: '' }, // 'new' | 'search' | 'history' | 'settings'
 	avatar: { type: String, default: '@/assets/fantuan.png' },
 });
 
-// Emits: 'new-recording', 'search', 'open-history', 'open-settings', 'open-profile'
+// State
+const showMenu = ref(false);
+const username = ref('Zhi Kang Xie');
+
+// Methods
+function logout() {
+	console.log('Logging out...');
+	// Add logout logic here
+	showMenu.value = false;
+}
 </script>
 
 <style lang="scss" scoped>
@@ -80,6 +110,40 @@ defineProps({
 		background: rgba(0, 0, 0, 0.04); // subtle gray
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); // light depth
 		transform: scale(1.05); // slight pop effect
+	}
+}
+
+.settings-container {
+	position: relative;
+}
+
+.settings-popup {
+	position: absolute;
+	bottom: 3rem;
+	left: 1rem;
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	padding: 8px 0;
+	width: 160px;
+	display: flex;
+	flex-direction: column;
+	z-index: 50;
+}
+
+.menu-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	font-size: 14px;
+}
+
+.logout {
+	color: red;
+	cursor: pointer;
+	&:hover {
+		background-color: #f3f4f6;
 	}
 }
 </style>
