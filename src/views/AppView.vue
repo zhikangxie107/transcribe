@@ -4,7 +4,7 @@
 			:active="activeItem"
 			:avatar="avatarUrl"
 			@new-recording="handleNew"
-			@search="handleSearch"
+			@search="showSearch = true"
 		/>
 
 		<section class="content" :class="{ recording: isRecording }">
@@ -42,6 +42,12 @@
 				</aside>
 			</div>
 		</section>
+
+		<SearchModal
+			v-model:modelValue="showSearch"
+			:items="historyItems"
+			@select="openTranscript"
+		/>
 	</main>
 </template>
 
@@ -51,19 +57,28 @@ import { useRouter } from 'vue-router';
 import Sidebar from '@/components/Sidebar.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
+import SearchModal from '@/components/SearchModal.vue';
 
 const router = useRouter();
 const activeItem = ref('new');
 const isRecording = ref(false);
 const transcript = ref(''); // put live transcript here as you capture audio
+const showSearch = ref(false);
 
 function handleNew() {
 	activeItem.value = 'new';
 }
-function handleSearch() {
-	activeItem.value = 'search';
-}
 
+const historyItems = ref([
+	{ id: 't1', title: 'How my summer went…' },
+	{ id: 't2', title: 'Apple vs Samsung' },
+]);
+
+function openTranscript(item) {
+	// route or load the transcript
+	// e.g., router.push({ name: 'transcript', params: { id: item.id } })
+	console.log('Open:', item);
+}
 function toggleRecording() {
 	isRecording.value = !isRecording.value;
 	// TODO: start/stop your recorder here
@@ -177,7 +192,7 @@ function saveTranscript() {
 		justify-content: flex-end;
 		gap: 8px;
 		margin-top: 12px;
-        margin-right: 1rem;
+		margin-right: 1rem;
 	}
 
 	.save {
