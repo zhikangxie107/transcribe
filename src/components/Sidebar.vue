@@ -37,7 +37,7 @@
 					<FontAwesomeIcon :icon="faUser" />
 					<span>{{ username }}</span>
 				</div>
-				<div class="menu-item logout" @click="logout">
+				<div class="menu-item logout" @click="logoutUser">
 					<FontAwesomeIcon :icon="faRightFromBracket" />
 					<span>Log out</span>
 				</div>
@@ -56,6 +56,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
 import { ref } from 'vue';
+import { logout } from '@/client/apiClient';
+import { useRouter } from 'vue-router';
 // Props
 defineProps({
 	active: { type: String, default: '' }, // 'new' | 'search' | 'history' | 'settings'
@@ -66,11 +68,14 @@ defineProps({
 const showMenu = ref(false);
 const username = ref('Zhi Kang Xie');
 
+const router = useRouter();
+
 // Methods
-function logout() {
+function logoutUser() {
 	console.log('Logging out...');
-	// Add logout logic here
 	showMenu.value = false;
+	logout();
+	router.push({ name: 'landing' })
 }
 </script>
 

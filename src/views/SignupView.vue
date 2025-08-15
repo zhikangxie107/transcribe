@@ -11,7 +11,7 @@
 				<h1 class="title">Sign Up</h1>
 				<p class="subtitle">Welcome! Glad to have you</p>
 
-				<form class="form" @submit.prevent="onSubmit">
+				<form class="form" @submit.prevent="submit">
 					<label class="sr-only" for="username">Username</label>
 					<input
 						id="username"
@@ -42,12 +42,12 @@
 					<input
 						id="confirm"
 						v-model="confirm"
-						type="confirm"
+						type="password"
 						placeholder="confirm password"
 						required
 					/>
 
-					<button class="btn-primary" :disabled="loading">
+					<button class="btn-primary" :disabled="loading" type="submit">
 						{{ loading ? 'Creating account…' : 'Sign Up' }}
 					</button>
 				</form>
@@ -64,29 +64,25 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-// import { Auth } from '@/client/auth' // when your API is ready
+import { signup } from '@/client/apiClient';
 
 const router = useRouter();
-const username = ref('');
 const email = ref('');
 const password = ref('');
-const confirm = ref('');
-const loading = ref(false);
+const username = ref('');
+const error = ref('');
 
-async function onSubmit() {
-	if (password.value !== confirm.value) {
-		alert('Passwords do not match.');
-		return;
-	}
+async function submit() {
+	error.value = '';
 	try {
-		loading.value = true;
-		// await Auth.signup({ username: username.value, email: email.value, password: password.value })
-		// Optionally auto-login then:
-		router.push('/app');
-	} catch (err) {
-		alert(err?.message || 'Sign up failed');
-	} finally {
-		loading.value = false;
+		await signup({
+			email: email.value,
+			password: password.value,
+			displayName: username.value,
+		});
+		router.push({ name: 'app' });
+	} catch (e) {
+		error.value = e.message || 'Signup failed';
 	}
 }
 </script>

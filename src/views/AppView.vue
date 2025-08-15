@@ -17,7 +17,7 @@
 				>
 					<FontAwesomeIcon :icon="faMicrophone" class="mic" />
 				</button>
-				<h2>Let’s get started, Zhi!</h2>
+				<h2 v-if="user">Let’s get started, {{ user.display_name }}!</h2>
 			</div>
 
 			<!-- Recording state -->
@@ -52,17 +52,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Sidebar from '@/components/Sidebar.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import SearchModal from '@/components/SearchModal.vue';
+import { me } from '@/client/apiClient';
 
-const router = useRouter();
 const activeItem = ref('new');
 const isRecording = ref(false);
-const transcript = ref(''); // put live transcript here as you capture audio
 const showSearch = ref(false);
 
 function handleNew() {
@@ -88,6 +87,12 @@ function saveTranscript() {
 	// persist transcript.value somewhere (emit, API call, etc.)
 	console.log('Saved transcript:', transcript.value);
 }
+
+const user = ref(null);
+
+onMounted(async () => {
+	user.value = await me();
+});
 </script>
 
 <style lang="scss" scoped>
