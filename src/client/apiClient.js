@@ -117,3 +117,63 @@ export async function me() {
   if (!res.ok) throw new Error("Failed to fetch profile");
   return res.json(); // { uid, email, display_name, photo_url, email_verified }
 }
+
+export async function transcribeAudio(file, { language } = {}) {
+  const fd = new FormData();
+  fd.append("audio", file);
+  if (language) fd.append("language", language);
+
+  const res = await fetchWithAuth("/transcripts/transcribe", {
+    method: "POST",
+    body: fd,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.detail || "Transcription failed");
+  return data;
+}
+
+export async function listTranscripts() {
+  const res = await fetchWithAuth("/transcripts");
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.detail || "Failed to list transcripts");
+  return data;
+}
+
+export async function getTranscript(id) {
+  const res = await fetchWithAuth(`/transcripts/${id}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.detail || "Transcript not found");
+  return data;
+}
+
+export async function createTranscript({ text, words = [], filename } = {}) {
+  const res = await fetchWithAuth("/transcripts", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text, words, filename }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.detail || "Failed to create transcript");
+  return data;
+}
+
+export async function updateTranscript(id, { text, filename } = {}) {
+  const res = await fetchWithAuth(`/transcripts/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text, filename }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.detail || "Failed to update transcript");
+  return data;
+}
+
+export async function deleteTranscript(id) {
+  const res = await fetchWithAuth(`/transcripts/${id}`, { method: "DELETE" });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data?.detail || "Failed to delete transcript");
+  }
+  return { ok: true };
+}
+
