@@ -132,10 +132,11 @@ export async function me() {
 	return res.json(); // { uid, email, display_name, photo_url, email_verified }
 }
 
-export async function transcribeAudio(file, { language } = {}) {
+export async function transcribeAudio(file, { language, tid } = {}) {
 	const fd = new FormData();
 	fd.append('audio', file);
 	if (language) fd.append('language', language);
+    if (tid) fd.append('tid', tid);  
 
 	const res = await fetchWithAuth('/transcripts/transcribe', {
 		method: 'POST',

@@ -253,49 +253,48 @@ async function stopRecorderIfNeeded(keepEditorOpen = true) {
 
 /* Pause -> transcribe -> save/append */
 async function pauseAndTranscribe() {
-	try {
-		isLive.value = false;
-		isTranscribing.value = true;
-		const blob = await stopRecorderAndGetBlob();
-		await stopRecorderIfNeeded(true);
-		const file = new File(
-			[blob],
-			`recording-${Date.now()}.${blob.type.includes('mp4') ? 'm4a' : 'webm'}`,
-			{ type: blob.type }
-		);
+  try {
+    isLive.value = false;
+    isTranscribing.value = true;
 
-		// Send to backend (Whisper), get text
-		const res = await transcribeAudio(file, { language: 'en' }); // or omit to autodetect
-		const newText = (res.text || '').trim();
+    const blob = await stopRecorderAndGetBlob();
+    await stopRecorderIfNeeded(true);
 
-		// Append or create
-		if (currentId.value) {
-			const combined =
-				(transcript.value ? transcript.value.trim() + '\n' : '') + newText;
-			transcript.value = combined;
-			await autoSaveNow(); // persist immediately
-		} else {
-			// first take -> create doc
-			const doc = await createTranscript({
-				text: newText,
-				words: res.words || [],
-			});
-			currentId.value = doc.id;
-			transcript.value = newText;
-			words.value = res.words || [];
-			saveState.value = 'saved';
-		}
-		await refreshHistory();
-		chunks = [];
-	} catch (e) {
-		console.error('Transcribe failed', e);
-		saveState.value = 'error';
-	} finally {
-		isTranscribing.value = false;
-	}
+    const file = new File(
+      [blob],
+      `recording-${Date.now()}.${blob.type.includes('mp4') ? 'm4a' : 'webm'}`,
+      { type: blob.type }
+    );
+
+    // 1) Ask backend to create-or-update (uses tid if present)
+    const resp = await transcribeAudio(file, {
+      language: 'en',
+      tid: currentId.value || undefined,
+    });
+
+    // 2) Keep using the SAME doc id returned by the API
+    currentId.value = resp.id;
+
+    // 3) Append new text locally, then persist to that same doc
+    const chunk = (resp.text || '').trim();
+    transcript.value = transcript.value
+      ? `${transcript.value.trim()}\n${chunk}`
+      : chunk;
+
+    await autoSaveNow();
+
+    words.value = resp.words || [];
+    saveState.value = 'saved';
+    await refreshHistory();
+    chunks = [];
+  } catch (e) {
+    console.error('Transcribe failed', e);
+    saveState.value = 'error';
+  } finally {
+    isTranscribing.value = false;
+  }
 }
 
-/* ------------ Auto-save on edits (debounced) ------------ */
 function debounce(fn, ms) {
 	let t;
 	return (...args) => {
