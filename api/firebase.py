@@ -14,7 +14,6 @@ if not firebase_admin._apps:
     cred = _load_cred()
     firebase_admin.initialize_app(cred, {
         "projectId": settings.FIREBASE_PROJECT_ID or None,
-        # no storageBucket
     })
 
 db = firestore.client()

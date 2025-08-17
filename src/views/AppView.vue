@@ -83,12 +83,33 @@ const saveState = ref(''); // '', 'saving', 'saved', 'error'
 
 const user = ref(null);
 const transcripts = ref([]);
-const historyItems = computed(() =>
-	transcripts.value.map((t) => ({
+const dateFilter = (iso) =>
+	iso
+		? new Date(iso).toLocaleDateString(undefined, {
+				year: 'numeric',
+				month: 'short',
+				day: 'numeric',
+		  })
+		: '';
+
+const historyItems = computed(() => {
+	const list = transcripts.value ?? [];
+	const filtered = list.filter((t) => {
+		const isWebm = !!t.filename && /\.webm$/i.test(t.filename);
+		const hasText = !!(t.text && t.text.trim());
+		return !(isWebm && !hasText);
+	});
+
+	const source = filtered.length ? filtered : list;
+
+	return source.map((t) => ({
 		id: t.id,
-		title: t.filename || (t.text || '').slice(0, 48) || '(untitled)',
-	}))
-);
+		title:
+			t.filename && !/\.webm$/i.test(t.filename)
+				? t.filename
+				: t.text?.slice(0, 80) || dateFilter(t.createdAt) || '(untitled)',
+	}));
+});
 const currentId = ref(null);
 const transcript = ref('');
 const words = ref([]);
@@ -233,7 +254,6 @@ async function stopRecorderIfNeeded(keepEditorOpen = true) {
 /* Pause -> transcribe -> save/append */
 async function pauseAndTranscribe() {
 	try {
-		// freeze the recorder and get the finalized blob
 		isLive.value = false;
 		isTranscribing.value = true;
 		const blob = await stopRecorderAndGetBlob();

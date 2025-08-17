@@ -37,6 +37,13 @@
 						placeholder="password"
 						required
 					/>
+					<p
+						v-if="password && password.length < 6"
+						class="hint error"
+						aria-live="polite"
+					>
+						Password must be at least 6 characters.
+					</p>
 
 					<label class="sr-only" for="confirm">Confirm password</label>
 					<input
@@ -46,6 +53,13 @@
 						placeholder="confirm password"
 						required
 					/>
+					<p
+						v-if="confirm && password && confirm !== password"
+						class="hint error"
+						aria-live="polite"
+					>
+						Passwords do not match.
+					</p>
 
 					<button class="btn-primary" :disabled="loading" type="submit">
 						{{ loading ? 'Creating account…' : 'Sign Up' }}
@@ -83,6 +97,8 @@ async function submit() {
 		router.push({ name: 'app' });
 	} catch (e) {
 		error.value = e.message || 'Signup failed';
+	} finally {
+		loading.value = false;
 	}
 }
 </script>
@@ -257,5 +273,14 @@ input {
 		height: 420px;
 		filter: blur(150px);
 	}
+}
+
+.hint {
+	margin: 0.25rem 0 0.5rem;
+	font-size: 0.95rem;
+	text-align: left;
+}
+.error {
+	color: #b91c1c;
 }
 </style>

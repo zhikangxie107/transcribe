@@ -35,7 +35,9 @@
 			<div class="settings-popup" v-show="showMenu">
 				<div class="menu-item">
 					<FontAwesomeIcon :icon="faUser" />
-					<span>{{ username }}</span>
+					<span class="user-name">{{
+						user?.display_name || user?.email || 'Account'
+					}}</span>
 				</div>
 				<div class="menu-item logout" @click="logoutUser">
 					<FontAwesomeIcon :icon="faRightFromBracket" />
@@ -55,9 +57,10 @@ import {
 	faRightFromBracket,
 } from '@fortawesome/free-solid-svg-icons';
 import { faUser } from '@fortawesome/free-regular-svg-icons';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { logout } from '@/client/apiClient';
 import { useRouter } from 'vue-router';
+import { me } from '@/client/apiClient';
 // Props
 defineProps({
 	active: { type: String, default: '' }, // 'new' | 'search' | 'history' | 'settings'
@@ -66,16 +69,22 @@ defineProps({
 
 // State
 const showMenu = ref(false);
-const username = ref('Zhi Kang Xie');
+const user = ref(null);
 
 const router = useRouter();
+
+// Mounted
+
+onMounted(async () => {
+	user.value = await me().catch(() => null);
+});
 
 // Methods
 function logoutUser() {
 	console.log('Logging out...');
 	showMenu.value = false;
 	logout();
-	router.push({ name: 'landing' })
+	router.push({ name: 'landing' });
 }
 </script>
 

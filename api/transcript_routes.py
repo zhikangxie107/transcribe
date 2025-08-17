@@ -104,6 +104,7 @@ async def delete_transcript(tid: str, uid: str = Depends(get_current_uid)):
 async def transcribe(
     audio: UploadFile = File(...),
     language: Optional[str] = Form(None),
+    tid: Optional[str] = Form(None),
     uid: str = Depends(get_current_uid),
 ):
     data = await audio.read()
@@ -116,6 +117,22 @@ async def transcribe(
         content_type=audio.content_type,
         language=language,
     )
+
+    if tid:
+        ref = db.collection("transcripts").document(tid)
+        snap = ref.get()
+        if not snap.exists:
+            raise HTTPException(404, "Transcript not found")
+        doc = snap.to_dict()
+        if doc.get("uid") != uid:
+            raise HTTPException(404, "Transcript not found")
+
+        ref.update({
+            "text": text,
+            "words": words,
+            "filename": audio.filename,
+        })
+        return _serialize_snap(ref.get())
 
     doc = {
         "uid": uid,
