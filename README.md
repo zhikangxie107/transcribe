@@ -1,29 +1,24 @@
-# .
+# Transcribe Set Up
 
-This template should help get you started developing with Vue 3 in Vite.
+## API
 
-## Recommended IDE Setup
+### Create Virtual Environment
+1. `cd api`
+2. `python -m venv venv`
+3. `source venv/bin/activate `
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+### Install Dependencies 
+`pip install -r requirements.txt`
 
-## Customize configuration
+### Copy .env.example file and edit it
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+### Run API
+`uvicorn main:app --reload --port 8000`
 
-## Project Setup
+## Web
 
-```sh
-npm install
-```
+### Install Node
+`npm install`
 
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+### Run Web
+`npm run dev`

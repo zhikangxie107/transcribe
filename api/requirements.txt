@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+firebase-admin
+httpx
+pydantic
+python-multipart
+pydantic[email]
+transformers>=4.40
+torch
+torchaudio
+accelerate

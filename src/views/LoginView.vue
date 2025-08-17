@@ -11,7 +11,7 @@
 				<h1 class="title">Login</h1>
 				<p class="subtitle">Welcome back! Please enter your details</p>
 
-				<form class="form" @submit.prevent="onSubmit">
+				<form class="form" @submit.prevent="submit">
 					<label class="sr-only" for="email">Email</label>
 					<input
 						id="email"
@@ -30,7 +30,7 @@
 						required
 					/>
 
-					<button class="btn-primary" :disabled="loading">
+					<button class="btn-primary" :disabled="loading" type="submit">
 						{{ loading ? 'Logging in…' : 'Login' }}
 					</button>
 				</form>
@@ -47,21 +47,20 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { login } from '@/client/apiClient';
 
+const router = useRouter();
 const email = ref('');
 const password = ref('');
-const loading = ref(false);
+const error = ref('');
 
-async function onSubmit() {
+async function submit() {
+	error.value = '';
 	try {
-		loading.value = true;
-		// await Auth.login(email.value, password.value)
-		// go to app/home after successful login
-		router.push('/app');
-	} catch (err) {
-		alert(err?.message || 'Login failed');
-	} finally {
-		loading.value = false;
+		await login({ email: email.value, password: password.value });
+		router.push({ name: 'app' });
+	} catch (e) {
+		error.value = e.message || 'Login failed';
 	}
 }
 </script>
