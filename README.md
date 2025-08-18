@@ -1,4 +1,4 @@
-# Transcribe Set Up
+# Transcribe
 Created a simple voice-note app that records a user's voice, then transcribes it using
 Whisper ASR model.
 ## API
